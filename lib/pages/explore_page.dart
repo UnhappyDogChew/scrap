@@ -1,13 +1,38 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:scrap/models/post.dart';
+import 'package:scrap/services/data_service.dart';
 
-class ExplorePage extends StatelessWidget {
+class ExplorePage extends StatefulWidget {
   const ExplorePage({
     Key? key,
-    required this.posts,
   }) : super(key: key);
 
-  final List<Post> posts;
+  @override
+  State<ExplorePage> createState() => _ExplorePageState();
+}
+
+class _ExplorePageState extends State<ExplorePage> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // fetch 10 posts
+    log('${DataService().fetchPosts()} posts are fetched');
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.outOfRange) {
+        if (_scrollController.position.pixels < 0) {
+          log('top');
+        } else {
+          log('bottom');
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +42,16 @@ class ExplorePage extends StatelessWidget {
         color: Colors.grey[200],
       ),
       child: ListView.builder(
-        itemCount: posts.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        controller: _scrollController,
+        itemCount: DataService().posts.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/post', arguments: posts[index]);
+                Navigator.pushNamed(context, '/post',
+                    arguments: DataService().posts[index]);
               },
               child: Card(
                 elevation: 3.0,
@@ -42,7 +70,7 @@ class ExplorePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              posts[index].title,
+                              DataService().posts[index].title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -54,7 +82,7 @@ class ExplorePage extends StatelessWidget {
                             ),
                             SizedBox(height: 16.0),
                             Text(
-                              posts[index].body,
+                              DataService().posts[index].body,
                               maxLines: 2,
                               overflow: TextOverflow.fade,
                               style: TextStyle(
@@ -68,7 +96,7 @@ class ExplorePage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'by username',
+                        'by ${DataService().users[DataService().posts[index].userId]!.username}',
                         textAlign: TextAlign.end,
                         style: TextStyle(
                           color: Colors.grey[500],

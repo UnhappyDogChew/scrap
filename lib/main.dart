@@ -26,8 +26,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Post> posts = DataService().posts(0, 3);
-
   late List<Widget> _pages;
 
   int _selectedIndex = 1;
@@ -43,7 +41,7 @@ class _HomeState extends State<Home> {
     super.initState();
     _pages = [
       SearchPage(),
-      ExplorePage(posts: posts),
+      ExplorePage(),
       ScrapPage(),
     ];
   }

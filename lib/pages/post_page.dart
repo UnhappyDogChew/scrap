@@ -15,7 +15,7 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     assert(ModalRoute.of(context) != null, 'post is null');
     Post post = ModalRoute.of(context)!.settings.arguments as Post;
-    User user = DataService().userOfId(post.userId)!;
+    User user = DataService().users[post.userId]!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[50],
